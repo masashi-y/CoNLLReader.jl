@@ -5,15 +5,15 @@ typealias String AbstractString
 
 abstract BaseToken
 
-macro format(args...)
-    token_t = :(type Token <: BaseToken end)
+macro format(t_name, args...)
+    token_t = :(type $t_name <: BaseToken end)
     token_fields = token_t.args[3].args
-    init = parse("""function Token(line::AbstractString)
+    init = parse("""function $t_name(line::AbstractString)
             items = split(strip(line), "\t")
     end""")
     init_args = init.args[2].args
-    init_res = :(Token())
-    printfunc = parse("""function Base.print(io::IO, token::Token)
+    init_res = :($t_name())
+    printfunc = parse("""function Base.print(io::IO, token::$t_name)
             print(io, join([], "\t"))
     end""")
     printargs = Any[]

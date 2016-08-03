@@ -49,6 +49,9 @@ macro format(t_name, args...)
     end
     push!(init_args, init_res)
     printfunc.args[2].args[2].args[3].args[2].args = printargs # args for join
+    # eval(token_t)
+    # eval(init)
+    # eval(printfunc)
     quote
         $(esc(token_t))
         $(esc(init))
@@ -56,6 +59,9 @@ macro format(t_name, args...)
     end
 end
 
+macro WSJ(t_name)
+    :eval(@CoNLLReader.format $(esc(t_name)) id::Int word :- tag ctag :- head::Int label :- :-)
+end
 
 function read{Token <: BaseToken}(::Type{Token}, filename::AbstractString)
     res = Vector{Token}[[]]

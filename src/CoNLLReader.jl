@@ -3,10 +3,8 @@ module CoNLLReader
 export BaseToken, format, read
 typealias String AbstractString
 
-abstract BaseToken
-
 macro format(t_name, args...)
-    token_t = :(type $t_name <: BaseToken end)
+    token_t = :(type $t_name end)
     token_fields = token_t.args[3].args
     init = parse("""function $t_name(line::AbstractString)
             items = split(strip(line), "\t")
@@ -60,10 +58,16 @@ macro format(t_name, args...)
 end
 
 macro WSJ(t_name)
-    :eval(@CoNLLReader.format $(esc(t_name)) id::Int word :- tag ctag :- head::Int label :- :-)
+    # t_name = esc(t_name)
+    text = "@format $t_name id word :- tag ctag :- head label :- :-"
+    exp = "export $t_name"
+    quote
+        eval(parse($text))
+        eval(parse($exp))
+    end
 end
 
-function read{Token <: BaseToken}(::Type{Token}, filename::AbstractString)
+function read(::Type, filename::AbstractString)
     res = Vector{Token}[[]]
     for line in open(readlines, filename)
         if length(line) < 3

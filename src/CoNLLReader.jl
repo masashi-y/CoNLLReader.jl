@@ -59,7 +59,7 @@ end
 
 macro WSJ(t_name)
     # t_name = esc(t_name)
-    text = "@format $t_name id word :- tag ctag :- head label :- :-"
+    text = "@format $t_name id::Int word::ASCIIString :- tag::ASCIIString ctag::ASCIIString :- head::Int label::ASCIIString :- :-"
     exp = "export $t_name"
     quote
         eval(parse($text))
